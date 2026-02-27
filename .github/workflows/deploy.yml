@@ -27,20 +27,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # If GitHub Secrets are set, overwrite developer.config.js with the secret values
-      # before the site is packaged. Fields left blank in secrets keep their config-file defaults.
-      - name: Inject developer config from secrets
+      # If GitHub environment variables are set, overwrite developer.config.js with the environment values
+      # before the site is packaged. Fields left blank in environment variables keep their config-file defaults.
+      - name: Inject developer config from environment variables
         env:
-          DEV_NAME:     ${{ secrets.DEV_NAME }}
-          DEV_TITLE:    ${{ secrets.DEV_TITLE }}
-          DEV_BIO:      ${{ secrets.DEV_BIO }}
-          DEV_EMAIL:    ${{ secrets.DEV_EMAIL }}
-          DEV_PHONE:    ${{ secrets.DEV_PHONE }}
-          DEV_GITHUB:   ${{ secrets.DEV_GITHUB }}
-          DEV_LINKEDIN: ${{ secrets.DEV_LINKEDIN }}
+          DEV_NAME:     ${{ env.DEV_NAME }}
+          DEV_TITLE:    ${{ env.DEV_TITLE }}
+          DEV_BIO:      ${{ env.DEV_BIO }}
+          DEV_EMAIL:    ${{ env.DEV_EMAIL }}
+          DEV_PHONE:    ${{ env.DEV_PHONE }}
+          DEV_GITHUB:   ${{ env.DEV_GITHUB }}
+          DEV_LINKEDIN: ${{ env.DEV_LINKEDIN }}
         run: |
-          # Only regenerate the config when at least one secret is populated.
-          # This means the workflow still works even if no secrets are configured.
+          # Only regenerate the config when at least one environment variable is populated.
+          # This means the workflow still works even if no environment variables are configured.
           if [ -n "$DEV_NAME$DEV_EMAIL$DEV_PHONE" ]; then
             cat > developer.config.js << ENDOFCONFIG
           'use strict';
