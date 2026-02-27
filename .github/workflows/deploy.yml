@@ -27,6 +27,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # If GitHub Secrets are set, overwrite developer.config.js with the secret values
+      # before the site is packaged. Fields left blank in secrets keep their config-file defaults.
+      - name: Inject developer config from secrets
+        env:
+          DEV_NAME:     ${{ secrets.DEV_NAME }}
+          DEV_TITLE:    ${{ secrets.DEV_TITLE }}
+          DEV_BIO:      ${{ secrets.DEV_BIO }}
+          DEV_EMAIL:    ${{ secrets.DEV_EMAIL }}
+          DEV_PHONE:    ${{ secrets.DEV_PHONE }}
+          DEV_GITHUB:   ${{ secrets.DEV_GITHUB }}
+          DEV_LINKEDIN: ${{ secrets.DEV_LINKEDIN }}
+        run: |
+          # Only regenerate the config when at least one secret is populated.
+          # This means the workflow still works even if no secrets are configured.
+          if [ -n "$DEV_NAME$DEV_EMAIL$DEV_PHONE" ]; then
+            cat > developer.config.js << ENDOFCONFIG
+          'use strict';
+          const DEVELOPER_CONFIG = {
+            name:       '${DEV_NAME}',
+            title:      '${DEV_TITLE}',
+            bio:        '${DEV_BIO}',
+            avatarUrl:  '',
+            email:      '${DEV_EMAIL}',
+            phone:      '${DEV_PHONE}',
+            github:     '${DEV_GITHUB}',
+            linkedin:   '${DEV_LINKEDIN}',
+            skills:     [],
+            projects:   [],
+            experience: [],
+          };
+          ENDOFCONFIG
+          fi
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
