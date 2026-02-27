@@ -537,6 +537,26 @@ function deleteItem(id) {
 }
 
 // ============================================================
+// CLEAR ALL
+// ============================================================
+
+function clearAllItems() {
+  if (!confirm('Are you sure you want to delete all items? This cannot be undone.')) return;
+
+  db.run('DELETE FROM inventory');
+  saveDatabase();
+  loadInventoryFromDB();
+
+  updateKPIs();
+  updateRecentActivity();
+  renderInventoryTable(getCurrentFilter());
+  renderInventoryChart();
+
+  const dashTerm = document.getElementById('dashboard-search-input')?.value || '';
+  renderDashboardResults(dashTerm);
+}
+
+// ============================================================
 // FORM — VALIDATION HELPERS
 // ============================================================
 
@@ -737,6 +757,7 @@ function initFilters() {
   document.getElementById('search-input')?.addEventListener('input',  () => renderInventoryTable(getCurrentFilter()));
   document.getElementById('filter-category')?.addEventListener('change', () => renderInventoryTable(getCurrentFilter()));
   document.getElementById('filter-status')?.addEventListener('change',   () => renderInventoryTable(getCurrentFilter()));
+  document.getElementById('clear-all-btn')?.addEventListener('click', clearAllItems);
 }
 
 // ============================================================
