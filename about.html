@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Developer — ABC Logistics</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+
+  <aside id="sidebar">
+    <div class="brand">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="36" height="36" rx="8" fill="rgba(255,255,255,0.12)"/>
+        <!-- Truck body -->
+        <rect x="4" y="14" width="18" height="12" rx="2" fill="white"/>
+        <!-- Cab -->
+        <path d="M22 18 L22 26 L31 26 L31 21 L28 18 Z" fill="white"/>
+        <!-- Wheels -->
+        <circle cx="9" cy="27" r="3" fill="#1a3a5c"/>
+        <circle cx="25" cy="27" r="3" fill="#1a3a5c"/>
+        <!-- Windshield -->
+        <path d="M23 19 L23 23 L29 23 L29 21 L26.5 19 Z" fill="#1a3a5c"/>
+      </svg>
+      <div>
+        <span class="brand-name">ABC Logistics</span>
+        <span class="brand-sub">Command Center</span>
+      </div>
+    </div>
+    <nav>
+      <ul>
+        <li>
+          <a href="index.html">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor"/>
+              <rect x="9" y="1" width="6" height="6" rx="1" fill="currentColor"/>
+              <rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor"/>
+              <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"/>
+            </svg>
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="index.html">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="8" y1="4.5" x2="8" y2="11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="4.5" y1="8" x2="11.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Add Item
+          </a>
+        </li>
+        <li>
+          <a href="index.html">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="1" y="2" width="14" height="2.5" rx="1" fill="currentColor"/>
+              <rect x="1" y="6.75" width="14" height="2.5" rx="1" fill="currentColor"/>
+              <rect x="1" y="11.5" width="14" height="2.5" rx="1" fill="currentColor"/>
+            </svg>
+            Inventory List
+          </a>
+        </li>
+        <li>
+          <a href="about.html" class="active">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            About Developer
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main id="main-content">
+    <h1 class="page-title">About Developer</h1>
+
+    <!-- Profile Card -->
+    <div class="panel" id="about-profile-panel">
+      <div class="panel-header">
+        <h2>Profile</h2>
+      </div>
+      <div class="about-profile-body">
+        <div id="about-avatar" class="about-avatar" aria-hidden="true"></div>
+        <div class="about-profile-info">
+          <h3 id="about-name" class="about-name"></h3>
+          <p  id="about-title" class="about-title-text"></p>
+          <p  id="about-bio" class="about-bio"></p>
+          <div id="about-contact" class="about-contact"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="panel" id="about-skills-panel" style="display:none;">
+      <div class="panel-header">
+        <h2>Skills</h2>
+      </div>
+      <div class="about-skills-body" id="about-skills-body"></div>
+    </div>
+
+    <!-- Projects -->
+    <div class="panel" id="about-projects-panel" style="display:none;">
+      <div class="panel-header">
+        <h2>Projects</h2>
+      </div>
+      <div id="about-projects-body"></div>
+    </div>
+
+    <!-- Experience -->
+    <div class="panel" id="about-experience-panel" style="display:none;">
+      <div class="panel-header">
+        <h2>Experience</h2>
+      </div>
+      <div id="about-experience-body"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Config must load before about.js -->
+<script src="developer.config.js"></script>
+<script src="about.js"></script>
+</body>
+</html>
