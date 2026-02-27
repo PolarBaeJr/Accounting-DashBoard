@@ -164,6 +164,43 @@
           </table>
         </div>
       </div>
+
+        <!-- Inventory Chart Panel -->
+        <div class="panel" id="chart-panel">
+          <div class="panel-header">
+            <h2>Inventory Quantities</h2>
+            <span class="panel-sub">All items by quantity on hand</span>
+          </div>
+          <div class="chart-canvas-wrapper">
+            <canvas id="inventory-chart" aria-label="Bar chart of inventory quantities" role="img"></canvas>
+          </div>
+        </div>
+
+        <!-- Dashboard Item Lookup Panel -->
+        <div class="panel" id="dashboard-search-panel">
+          <div class="panel-header">
+            <h2>Item Lookup</h2>
+            <div class="list-toolbar">
+              <input type="text" id="dashboard-search-input" placeholder="Search by name or ID...">
+            </div>
+          </div>
+          <div class="table-wrapper" id="dashboard-results-wrapper">
+            <table id="dashboard-results-table">
+              <thead>
+                <tr>
+                  <th>Item ID</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Qty</th>
+                  <th>Unit Price</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-results-tbody"></tbody>
+            </table>
+          </div>
+          <p id="dashboard-no-results" class="empty-msg" style="display:none;"></p>
+        </div>
     </section>
 
     <!-- ADD ITEM SECTION -->
@@ -266,6 +303,7 @@
 
   </main>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

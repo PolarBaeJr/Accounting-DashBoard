@@ -549,3 +549,36 @@ input[readonly] {
     padding: 0 1rem 1rem;
   }
 }
+
+/* =============================================
+   Inventory Chart
+   ============================================= */
+/* Explicit height is required: with maintainAspectRatio:false, Chart.js sizes itself
+   to the wrapper, but a bare <canvas> has no intrinsic height so it collapses to 0. */
+.chart-canvas-wrapper {
+  padding: 1.5rem;
+  position: relative;
+  height: 320px;
+}
+
+.chart-canvas-wrapper canvas {
+  max-width: 100%;
+}
+
+/* =============================================
+   Dashboard Search Results
+   ============================================= */
+.qty-zero {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+/* =============================================
+   Responsive — chart on mobile
+   ============================================= */
+@media (max-width: 768px) {
+  .chart-canvas-wrapper {
+    height: 240px;
+    padding: 1rem;
+  }
+}

@@ -4,6 +4,7 @@ const STORAGE_KEY = 'abcLogisticsInventory';
 const ID_KEY = 'abcLogisticsNextId';
 
 let inventory = [];
+let inventoryChartInstance = null;
 
 // --- Persistence ---
 
@@ -25,6 +26,222 @@ function saveInventory() {
   } catch (e) {
     console.warn('Storage quota exceeded', e);
   }
+}
+
+function buildChartData() {
+  // Sort alphabetically so chart order is stable across add/delete operations
+  const sorted = [...inventory].sort((a, b) => a.name.localeCompare(b.name));
+
+  const labels = sorted.map(item => {
+    const n = item.name || '(unnamed)';
+    return n.length > 20 ? n.slice(0, 18) + '\u2026' : n;
+  });
+
+  const quantities = sorted.map(item => {
+    const q = Number(item.quantity);
+    return isNaN(q) ? 0 : q;
+  });
+
+  // Colour-code bars: danger red for 0, warning amber for <=5, primary blue otherwise
+  const backgroundColors = quantities.map(q => {
+    if (q === 0) return 'rgba(220, 38, 38, 0.75)';
+    if (q <= 5)  return 'rgba(217, 119, 6, 0.75)';
+    return 'rgba(26, 58, 92, 0.75)';
+  });
+
+  const borderColors = quantities.map(q => {
+    if (q === 0) return '#dc2626';
+    if (q <= 5)  return '#d97706';
+    return '#1a3a5c';
+  });
+
+  return { labels, quantities, backgroundColors, borderColors, sorted };
+}
+
+function renderInventoryChart() {
+  const canvas = document.getElementById('inventory-chart');
+  if (!canvas) return;
+
+  // Chart.js throws "Canvas is already in use" if you call new Chart() on a canvas
+  // that already has a live instance attached. Destroying first avoids that error.
+  if (inventoryChartInstance) {
+    inventoryChartInstance.destroy();
+    inventoryChartInstance = null;
+  }
+
+  const { labels, quantities, backgroundColors, borderColors, sorted } = buildChartData();
+
+  if (labels.length === 0) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '14px Segoe UI, system-ui, sans-serif';
+    ctx.fillStyle = '#64748b';
+    ctx.textAlign = 'center';
+    ctx.fillText('No inventory items to display.', canvas.width / 2, canvas.height / 2);
+    return;
+  }
+
+  inventoryChartInstance = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Quantity',
+        data: quantities,
+        backgroundColor: backgroundColors,
+        borderColor: borderColors,
+        borderWidth: 1,
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            // Show the full untruncated item name in the tooltip
+            title: (items) => sorted[items[0].dataIndex]?.name || items[0].label,
+            label: (item) => ` Quantity: ${item.raw}`,
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { font: { size: 11 }, color: '#64748b', maxRotation: 45, minRotation: 0 },
+          grid: { display: false },
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { font: { size: 11 }, color: '#64748b', precision: 0 },
+          grid: { color: '#e2e8f0' },
+        }
+      }
+    }
+  });
+}
+
+function renderDashboardResults(searchTerm) {
+  const term = (searchTerm || '').trim().toLowerCase();
+  const tbody = document.getElementById('dashboard-results-tbody');
+  const noResults = document.getElementById('dashboard-no-results');
+  const wrapper = document.getElementById('dashboard-results-wrapper');
+
+  if (!tbody) return;
+
+  // Empty search: show full chart, hide results table
+  if (term === '') {
+    wrapper.style.display = 'none';
+    noResults.style.display = 'none';
+    renderInventoryChart();
+    return;
+  }
+
+  wrapper.style.display = '';
+
+  const matched = inventory.filter(item =>
+    item.name.toLowerCase().includes(term) ||
+    item.id.toLowerCase().includes(term)
+  );
+
+  // Rebuild chart with only matched items. Must destroy the existing instance first
+  // (same reason as in renderInventoryChart — Chart.js rejects reuse of a live canvas).
+  if (inventoryChartInstance) {
+    inventoryChartInstance.destroy();
+    inventoryChartInstance = null;
+  }
+
+  const canvas = document.getElementById('inventory-chart');
+  if (canvas) {
+    if (matched.length > 0) {
+      const sortedMatched = [...matched].sort((a, b) => a.name.localeCompare(b.name));
+      const labels = sortedMatched.map(i => {
+        const n = i.name || '(unnamed)';
+        return n.length > 20 ? n.slice(0, 18) + '\u2026' : n;
+      });
+      const quantities = sortedMatched.map(i => {
+        const q = Number(i.quantity);
+        return isNaN(q) ? 0 : q;
+      });
+      const bg = quantities.map(q => q === 0 ? 'rgba(220,38,38,0.75)' : q <= 5 ? 'rgba(217,119,6,0.75)' : 'rgba(26,58,92,0.75)');
+      const border = quantities.map(q => q === 0 ? '#dc2626' : q <= 5 ? '#d97706' : '#1a3a5c');
+
+      inventoryChartInstance = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{ label: 'Quantity', data: quantities, backgroundColor: bg, borderColor: border, borderWidth: 1, borderRadius: 4 }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (items) => sortedMatched[items[0].dataIndex]?.name || items[0].label,
+                label: (item) => ` Quantity: ${item.raw}`,
+              }
+            }
+          },
+          scales: {
+            x: { ticks: { font: { size: 11 }, color: '#64748b', maxRotation: 45 }, grid: { display: false } },
+            y: { beginAtZero: true, ticks: { font: { size: 11 }, color: '#64748b', precision: 0 }, grid: { color: '#e2e8f0' } }
+          }
+        }
+      });
+    } else {
+      // No matches: draw placeholder text on canvas
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.font = '14px Segoe UI, system-ui, sans-serif';
+      ctx.fillStyle = '#64748b';
+      ctx.textAlign = 'center';
+      ctx.fillText('No items match your search.', canvas.width / 2, canvas.height / 2);
+    }
+  }
+
+  // Render mini results table
+  if (matched.length === 0) {
+    tbody.innerHTML = '';
+    noResults.style.display = 'block';
+    noResults.textContent = `No items found matching "${searchTerm}".`;
+    return;
+  }
+
+  noResults.style.display = 'none';
+  tbody.innerHTML = matched
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(item => {
+      const q = Number(item.quantity);
+      const qty = isNaN(q) ? 0 : q;
+      const qtyCls = qty === 0 ? 'qty-zero' : '';
+      return `
+        <tr>
+          <td><code>${item.id}</code></td>
+          <td>${item.name}</td>
+          <td>${item.category}</td>
+          <td class="${qtyCls}">${qty}</td>
+          <td>${formatCurrency(item.unitPrice)}</td>
+          <td>${statusBadge(item.status)}</td>
+        </tr>`;
+    }).join('');
+}
+
+function initDashboardSearch() {
+  const input = document.getElementById('dashboard-search-input');
+  if (!input) return;
+
+  // Hide results table on init; show full chart by default
+  const wrapper = document.getElementById('dashboard-results-wrapper');
+  const noResults = document.getElementById('dashboard-no-results');
+  if (wrapper) wrapper.style.display = 'none';
+  if (noResults) noResults.style.display = 'none';
+
+  input.addEventListener('input', () => {
+    renderDashboardResults(input.value);
+  });
 }
 
 function getNextId() {
@@ -152,6 +369,8 @@ function deleteItem(id) {
   updateKPIs();
   updateRecentActivity();
   renderInventoryTable(getCurrentFilter());
+  const dashTerm = document.getElementById('dashboard-search-input')?.value || '';
+  renderDashboardResults(dashTerm);
 }
 
 // --- Form ---
@@ -212,6 +431,8 @@ function initForm() {
     updateKPIs();
     updateRecentActivity();
     renderInventoryTable(getCurrentFilter());
+    const dashTerm = document.getElementById('dashboard-search-input')?.value || '';
+    renderDashboardResults(dashTerm);
 
     form.reset();
     fTotal.value = '';
@@ -280,4 +501,6 @@ document.addEventListener('DOMContentLoaded', () => {
   updateKPIs();
   updateRecentActivity();
   renderInventoryTable({ search: '', category: '', status: '' });
+  renderInventoryChart();
+  initDashboardSearch();
 });
