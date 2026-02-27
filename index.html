@@ -73,13 +73,26 @@
     <section id="dashboard" class="section active">
       <h1 class="page-title">Dashboard</h1>
 
+      <!-- Dismissible warning banner — shown when duplicate items are detected and merged on load -->
+      <div id="duplicate-warning" class="alert-banner alert-warning" style="display:none;" role="alert">
+        <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+          <path d="M11 3 L20 19 L2 19 Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+          <line x1="11" y1="9" x2="11" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="11" cy="16.5" r="0.9" fill="currentColor"/>
+        </svg>
+        <div class="alert-body">
+          <strong>Duplicate items detected and merged.</strong>
+          <span id="duplicate-detail"></span>
+        </div>
+        <button class="alert-dismiss" id="dismiss-warning" aria-label="Dismiss warning">&times;</button>
+      </div>
+
       <div class="kpi-grid">
 
         <!-- Total Items -->
         <div class="kpi-card">
           <div class="kpi-icon">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <!-- Box icon -->
               <path d="M11 2 L20 6.5 L20 15.5 L11 20 L2 15.5 L2 6.5 Z" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
               <path d="M11 2 L11 20" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
               <path d="M2 6.5 L11 11 L20 6.5" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
@@ -95,7 +108,6 @@
         <div class="kpi-card">
           <div class="kpi-icon">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <!-- Dollar sign icon -->
               <circle cx="11" cy="11" r="9" stroke="white" stroke-width="1.5" fill="none"/>
               <path d="M11 5.5 L11 16.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
               <path d="M8.5 8 Q8.5 6.5 11 6.5 Q13.5 6.5 13.5 8.5 Q13.5 10 11 10.5 Q8.5 11 8.5 13 Q8.5 15.5 11 15.5 Q13.5 15.5 13.5 14" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
@@ -111,7 +123,6 @@
         <div class="kpi-card">
           <div class="kpi-icon" style="background: var(--color-warning);">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <!-- Warning triangle icon -->
               <path d="M11 3 L20 19 L2 19 Z" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
               <line x1="11" y1="9" x2="11" y2="14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
               <circle cx="11" cy="16.5" r="0.9" fill="white"/>
@@ -127,7 +138,6 @@
         <div class="kpi-card">
           <div class="kpi-icon">
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <!-- Grid icon -->
               <rect x="2" y="2" width="7.5" height="7.5" rx="1.5" fill="white"/>
               <rect x="12.5" y="2" width="7.5" height="7.5" rx="1.5" fill="white"/>
               <rect x="2" y="12.5" width="7.5" height="7.5" rx="1.5" fill="white"/>
@@ -165,42 +175,42 @@
         </div>
       </div>
 
-        <!-- Inventory Chart Panel -->
-        <div class="panel" id="chart-panel">
-          <div class="panel-header">
-            <h2>Inventory Quantities</h2>
-            <span class="panel-sub">All items by quantity on hand</span>
-          </div>
-          <div class="chart-canvas-wrapper">
-            <canvas id="inventory-chart" aria-label="Bar chart of inventory quantities" role="img"></canvas>
-          </div>
+      <!-- Inventory Chart Panel -->
+      <div class="panel" id="chart-panel">
+        <div class="panel-header">
+          <h2>Inventory Quantities</h2>
+          <span class="panel-sub">All items by quantity on hand</span>
         </div>
+        <div class="chart-canvas-wrapper">
+          <canvas id="inventory-chart" aria-label="Bar chart of inventory quantities" role="img"></canvas>
+        </div>
+      </div>
 
-        <!-- Dashboard Item Lookup Panel -->
-        <div class="panel" id="dashboard-search-panel">
-          <div class="panel-header">
-            <h2>Item Lookup</h2>
-            <div class="list-toolbar">
-              <input type="text" id="dashboard-search-input" placeholder="Search by name or ID...">
-            </div>
+      <!-- Dashboard Item Lookup Panel -->
+      <div class="panel" id="dashboard-search-panel">
+        <div class="panel-header">
+          <h2>Item Lookup</h2>
+          <div class="list-toolbar">
+            <input type="text" id="dashboard-search-input" placeholder="Search by name or ID...">
           </div>
-          <div class="table-wrapper" id="dashboard-results-wrapper">
-            <table id="dashboard-results-table">
-              <thead>
-                <tr>
-                  <th>Item ID</th>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Qty</th>
-                  <th>Unit Price</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="dashboard-results-tbody"></tbody>
-            </table>
-          </div>
-          <p id="dashboard-no-results" class="empty-msg" style="display:none;"></p>
         </div>
+        <div class="table-wrapper" id="dashboard-results-wrapper">
+          <table id="dashboard-results-table">
+            <thead>
+              <tr>
+                <th>Item ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-results-tbody"></tbody>
+          </table>
+        </div>
+        <p id="dashboard-no-results" class="empty-msg" style="display:none;"></p>
+      </div>
     </section>
 
     <!-- ADD ITEM SECTION -->
@@ -212,10 +222,13 @@
         </div>
         <form id="inventory-form" novalidate>
           <div class="form-grid">
+
             <div class="form-group">
               <label for="f-name">Item Name *</label>
               <input type="text" id="f-name" placeholder="e.g. Forklift Model X" required>
+              <span class="field-error" id="err-name"></span>
             </div>
+
             <div class="form-group">
               <label for="f-category">Category *</label>
               <select id="f-category" required>
@@ -225,19 +238,26 @@
                 <option value="Raw Materials">Raw Materials</option>
                 <option value="Finished Goods">Finished Goods</option>
               </select>
+              <span class="field-error" id="err-category"></span>
             </div>
+
             <div class="form-group">
               <label for="f-quantity">Quantity *</label>
-              <input type="number" id="f-quantity" min="0" placeholder="0" required>
+              <input type="number" id="f-quantity" min="0" step="1" placeholder="0" required>
+              <span class="field-error" id="err-quantity"></span>
             </div>
+
             <div class="form-group">
               <label for="f-unitPrice">Unit Price ($) *</label>
               <input type="number" id="f-unitPrice" min="0" step="0.01" placeholder="0.00" required>
+              <span class="field-error" id="err-unitPrice"></span>
             </div>
+
             <div class="form-group">
               <label for="f-totalValue">Total Value (auto)</label>
               <input type="text" id="f-totalValue" readonly placeholder="$0.00">
             </div>
+
             <div class="form-group">
               <label for="f-status">Status *</label>
               <select id="f-status" required>
@@ -246,6 +266,7 @@
                 <option value="Out of Stock">Out of Stock</option>
               </select>
             </div>
+
           </div>
           <div class="form-actions">
             <button type="submit" class="btn btn-primary">Add Item</button>
@@ -303,6 +324,9 @@
 
   </main>
 </div>
+
+<!-- SQL.js must load before Chart.js and app.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="app.js"></script>
 </body>
