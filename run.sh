@@ -3,19 +3,28 @@ set -e
 
 PORT=${1:-3001}
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
 
-# Pick the best available static server
-if command -v python3 &>/dev/null; then
-  echo "Serving on http://localhost:$PORT"
-  echo "Press Ctrl+C to stop."
-  # Open browser after a short delay (macOS)
+# ── PM2 (preferred) ────────────────────────────────────────────────────────────
+if command -v pm2 &>/dev/null; then
+  echo "Starting with PM2 on http://localhost:$PORT"
+  pm2 start ecosystem.config.js
+  pm2 save
+  (sleep 1 && open "http://localhost:$PORT" 2>/dev/null || true) &
+  pm2 logs abc-logistics
+
+# ── Python fallback ────────────────────────────────────────────────────────────
+elif command -v python3 &>/dev/null; then
+  echo "Serving on http://localhost:$PORT  (Ctrl+C to stop)"
   (sleep 0.8 && open "http://localhost:$PORT" 2>/dev/null || true) &
-  cd "$ROOT" && python3 -m http.server "$PORT" --bind 127.0.0.1
+  python3 -m http.server "$PORT" --bind 127.0.0.1
+
+# ── npx fallback ───────────────────────────────────────────────────────────────
 elif command -v npx &>/dev/null; then
-  echo "Serving on http://localhost:$PORT"
-  echo "Press Ctrl+C to stop."
-  cd "$ROOT" && npx --yes serve -l "$PORT"
+  echo "Serving on http://localhost:$PORT  (Ctrl+C to stop)"
+  npx --yes serve -l "$PORT"
+
 else
-  echo "Error: need python3 or npx to serve the project." >&2
+  echo "Error: install pm2, python3, or npx to run this project." >&2
   exit 1
 fi
