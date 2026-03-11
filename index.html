@@ -1,343 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Command Center — ABC Logistics</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<div id="app">
-
-  <!-- SIDEBAR -->
-  <aside id="sidebar">
-    <div class="brand">
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect width="36" height="36" rx="8" fill="rgba(255,255,255,0.12)"/>
-        <!-- Truck body -->
-        <rect x="4" y="14" width="18" height="12" rx="2" fill="white"/>
-        <!-- Cab -->
-        <path d="M22 18 L22 26 L31 26 L31 21 L28 18 Z" fill="white"/>
-        <!-- Wheels -->
-        <circle cx="9" cy="27" r="3" fill="#1a3a5c"/>
-        <circle cx="25" cy="27" r="3" fill="#1a3a5c"/>
-        <!-- Windshield -->
-        <path d="M23 19 L23 23 L29 23 L29 21 L26.5 19 Z" fill="#1a3a5c"/>
-      </svg>
-      <div>
-        <span class="brand-name">ABC Logistics</span>
-        <span class="brand-sub">Command Center</span>
-      </div>
-    </div>
-    <nav>
-      <ul>
-        <li>
-          <a href="#" data-section="dashboard" class="active">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <rect x="1" y="1" width="6" height="6" rx="1" fill="currentColor"/>
-              <rect x="9" y="1" width="6" height="6" rx="1" fill="currentColor"/>
-              <rect x="1" y="9" width="6" height="6" rx="1" fill="currentColor"/>
-              <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"/>
-            </svg>
-            Dashboard
-          </a>
-        </li>
-        <li>
-          <a href="#" data-section="add-item">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
-              <line x1="8" y1="4.5" x2="8" y2="11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-              <line x1="4.5" y1="8" x2="11.5" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            Add Item
-          </a>
-        </li>
-        <li>
-          <a href="#" data-section="inventory">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <rect x="1" y="2" width="14" height="2.5" rx="1" fill="currentColor"/>
-              <rect x="1" y="6.75" width="14" height="2.5" rx="1" fill="currentColor"/>
-              <rect x="1" y="11.5" width="14" height="2.5" rx="1" fill="currentColor"/>
-            </svg>
-            Inventory List
-          </a>
-        </li>
-        <li>
-          <a href="about.html">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            About Developer
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main id="main-content">
-
-    <!-- DASHBOARD SECTION -->
-    <section id="dashboard" class="section active">
-      <h1 class="page-title">Dashboard</h1>
-
-      <!-- Dismissible warning banner — shown when duplicate items are detected and merged on load -->
-      <div id="duplicate-warning" class="alert-banner alert-warning" style="display:none;" role="alert">
-        <svg width="20" height="20" viewBox="0 0 22 22" fill="none" aria-hidden="true">
-          <path d="M11 3 L20 19 L2 19 Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
-          <line x1="11" y1="9" x2="11" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          <circle cx="11" cy="16.5" r="0.9" fill="currentColor"/>
-        </svg>
-        <div class="alert-body">
-          <strong>Duplicate items detected and merged.</strong>
-          <span id="duplicate-detail"></span>
-        </div>
-        <button class="alert-dismiss" id="dismiss-warning" aria-label="Dismiss warning">&times;</button>
-      </div>
-
-      <div class="kpi-grid">
-
-        <!-- Total Items -->
-        <div class="kpi-card">
-          <div class="kpi-icon">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M11 2 L20 6.5 L20 15.5 L11 20 L2 15.5 L2 6.5 Z" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
-              <path d="M11 2 L11 20" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-              <path d="M2 6.5 L11 11 L20 6.5" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <div class="kpi-body">
-            <p class="kpi-label">Total Items</p>
-            <p class="kpi-value" id="kpi-total-items">—</p>
-          </div>
-        </div>
-
-        <!-- Total Inventory Value -->
-        <div class="kpi-card">
-          <div class="kpi-icon">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <circle cx="11" cy="11" r="9" stroke="white" stroke-width="1.5" fill="none"/>
-              <path d="M11 5.5 L11 16.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-              <path d="M8.5 8 Q8.5 6.5 11 6.5 Q13.5 6.5 13.5 8.5 Q13.5 10 11 10.5 Q8.5 11 8.5 13 Q8.5 15.5 11 15.5 Q13.5 15.5 13.5 14" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-            </svg>
-          </div>
-          <div class="kpi-body">
-            <p class="kpi-label">Total Inventory Value</p>
-            <p class="kpi-value" id="kpi-total-value">—</p>
-          </div>
-        </div>
-
-        <!-- Low Stock Alerts -->
-        <div class="kpi-card">
-          <div class="kpi-icon" style="background: var(--color-warning);">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M11 3 L20 19 L2 19 Z" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
-              <line x1="11" y1="9" x2="11" y2="14" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-              <circle cx="11" cy="16.5" r="0.9" fill="white"/>
-            </svg>
-          </div>
-          <div class="kpi-body">
-            <p class="kpi-label">Low Stock Alerts</p>
-            <p class="kpi-value" id="kpi-low-stock">—</p>
-          </div>
-        </div>
-
-        <!-- Categories in Use -->
-        <div class="kpi-card">
-          <div class="kpi-icon">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <rect x="2" y="2" width="7.5" height="7.5" rx="1.5" fill="white"/>
-              <rect x="12.5" y="2" width="7.5" height="7.5" rx="1.5" fill="white"/>
-              <rect x="2" y="12.5" width="7.5" height="7.5" rx="1.5" fill="white"/>
-              <rect x="12.5" y="12.5" width="7.5" height="7.5" rx="1.5" fill="white"/>
-            </svg>
-          </div>
-          <div class="kpi-body">
-            <p class="kpi-label">Categories in Use</p>
-            <p class="kpi-value" id="kpi-categories">—</p>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Recent Activity Panel -->
-      <div class="panel">
-        <div class="panel-header">
-          <h2>Recent Activity</h2>
-          <span class="panel-sub">Last 5 items added</span>
-        </div>
-        <div class="table-wrapper">
-          <table id="recent-table">
-            <thead>
-              <tr>
-                <th>Item ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Value</th>
-                <th>Status</th>
-                <th>Date Added</th>
-              </tr>
-            </thead>
-            <tbody id="recent-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Inventory Chart Panel -->
-      <div class="panel" id="chart-panel">
-        <div class="panel-header">
-          <h2>Inventory Quantities</h2>
-          <span class="panel-sub">All items by quantity on hand</span>
-        </div>
-        <div class="chart-canvas-wrapper">
-          <canvas id="inventory-chart" aria-label="Bar chart of inventory quantities" role="img"></canvas>
-        </div>
-      </div>
-
-      <!-- Dashboard Item Lookup Panel -->
-      <div class="panel" id="dashboard-search-panel">
-        <div class="panel-header">
-          <h2>Item Lookup</h2>
-          <div class="list-toolbar">
-            <input type="text" id="dashboard-search-input" placeholder="Search by name or ID...">
-          </div>
-        </div>
-        <div class="table-wrapper" id="dashboard-results-wrapper">
-          <table id="dashboard-results-table">
-            <thead>
-              <tr>
-                <th>Item ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Qty</th>
-                <th>Unit Price</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="dashboard-results-tbody"></tbody>
-          </table>
-        </div>
-        <p id="dashboard-no-results" class="empty-msg" style="display:none;"></p>
-      </div>
-    </section>
-
-    <!-- ADD ITEM SECTION -->
-    <section id="add-item" class="section">
-      <h1 class="page-title">Add Inventory Item</h1>
-      <div class="panel">
-        <div class="panel-header">
-          <h2>New Item Form</h2>
-        </div>
-        <form id="inventory-form" novalidate>
-          <div class="form-grid">
-
-            <div class="form-group">
-              <label for="f-name">Item Name *</label>
-              <input type="text" id="f-name" placeholder="e.g. Forklift Model X" required>
-              <span class="field-error" id="err-name"></span>
-            </div>
-
-            <div class="form-group">
-              <label for="f-category">Category *</label>
-              <select id="f-category" required>
-                <option value="">Select category...</option>
-                <option value="Equipment">Equipment</option>
-                <option value="Supplies">Supplies</option>
-                <option value="Raw Materials">Raw Materials</option>
-                <option value="Finished Goods">Finished Goods</option>
-              </select>
-              <span class="field-error" id="err-category"></span>
-            </div>
-
-            <div class="form-group">
-              <label for="f-quantity">Quantity *</label>
-              <input type="number" id="f-quantity" min="0" step="1" placeholder="0" required>
-              <span class="field-error" id="err-quantity"></span>
-            </div>
-
-            <div class="form-group">
-              <label for="f-unitPrice">Unit Price ($) *</label>
-              <input type="number" id="f-unitPrice" min="0" step="0.01" placeholder="0.00" required>
-              <span class="field-error" id="err-unitPrice"></span>
-            </div>
-
-            <div class="form-group">
-              <label for="f-totalValue">Total Value (auto)</label>
-              <input type="text" id="f-totalValue" readonly placeholder="$0.00">
-            </div>
-
-            <div class="form-group">
-              <label for="f-status">Status *</label>
-              <select id="f-status" required>
-                <option value="In Stock">In Stock</option>
-                <option value="Low Stock">Low Stock</option>
-                <option value="Out of Stock">Out of Stock</option>
-              </select>
-            </div>
-
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Add Item</button>
-            <button type="button" id="reset-form-btn" class="btn btn-secondary">Clear</button>
-          </div>
-        </form>
-        <div id="form-feedback" aria-live="polite"></div>
-      </div>
-    </section>
-
-    <!-- INVENTORY LIST SECTION -->
-    <section id="inventory" class="section">
-      <h1 class="page-title">Inventory List</h1>
-      <div class="panel">
-        <div class="panel-header">
-          <h2>All Items</h2>
-          <div class="list-toolbar">
-            <input type="text" id="search-input" placeholder="Search items...">
-            <select id="filter-category">
-              <option value="">All Categories</option>
-              <option value="Equipment">Equipment</option>
-              <option value="Supplies">Supplies</option>
-              <option value="Raw Materials">Raw Materials</option>
-              <option value="Finished Goods">Finished Goods</option>
-            </select>
-            <select id="filter-status">
-              <option value="">All Statuses</option>
-              <option value="In Stock">In Stock</option>
-              <option value="Low Stock">Low Stock</option>
-              <option value="Out of Stock">Out of Stock</option>
-            </select>
-            <button type="button" id="clear-all-btn" class="btn btn-clear-all">Clear All Items</button>
-          </div>
-        </div>
-        <div class="table-wrapper">
-          <table id="inventory-table">
-            <thead>
-              <tr>
-                <th>Item ID</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Qty</th>
-                <th>Unit Price</th>
-                <th>Total Value</th>
-                <th>Status</th>
-                <th>Date Added</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="inventory-tbody"></tbody>
-          </table>
-        </div>
-        <p id="no-items-msg" class="empty-msg" style="display:none;">No items found.</p>
-      </div>
-    </section>
-
-  </main>
-</div>
-
-<!-- SQL.js must load before Chart.js and app.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<script src="app.js"></script>
-</body>
-</html>
+<!doctype html>
+<html lang="zh-Hant">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>香港屋宇設備法規與規範資料庫</title><link rel="stylesheet" href="styles.css"></head>
+<body><div class="container">
+<header>
+<h1>香港屋宇設備法規與實務守則資料庫（18頁）</h1>
+<p class="subtitle">主頁整合 17 個香港常用法規網站，並提供可點擊的分頁資料庫（Synthetic Libraries），方便手機與桌面快速查閱。</p>
+</header>
+<section class="grid"><a class='card' href='ac.html'><h3>空調與通風（AC）</h3><p>屋宇署《建築物（通風系統）規例》</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-01</span></p></a>
+<a class='card' href='emsd.html'><h3>機電工程署（EMSD）</h3><p>《電力條例》（第406章）及《電力（線路）規例》</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-02</span></p></a>
+<a class='card' href='fsd.html'><h3>消防處（FSD）</h3><p>《消防（裝置及設備）規例》（第95B章）</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-03</span></p></a>
+<a class='card' href='wsd.html'><h3>水務署（WSD）</h3><p>《水務設施條例》（第102章）及《水務設施規例》</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-04</span></p></a>
+<a class='card' href='lift.html'><h3>升降機及自動梯</h3><p>《升降機及自動梯條例》（第618章）</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-05</span></p></a>
+<a class='card' href='security.html'><h3>保安系統</h3><p>《保安及護衛服務條例》（第460章）</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-06</span></p></a>
+<a class='card' href='beam.html'><h3>BEAM Plus 綠建環評</h3><p>BEAM Plus New Buildings 評估手冊</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-07</span></p></a>
+<a class='card' href='datacentre.html'><h3>數據中心（Data Centre）</h3><p>TIA-942、Uptime Tier 及 EMSD 能源效益指引</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-08</span></p></a>
+<a class='card' href='epd.html'><h3>環保署（EPD）</h3><p>《空氣污染管制條例》（第311章）</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-09</span></p></a>
+<a class='card' href='towngas.html'><h3>香港中華煤氣（Town Gas）</h3><p>《氣體安全條例》（第51章）</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-10</span></p></a>
+<a class='card' href='kitchen.html'><h3>商用廚房</h3><p>消防處《最低限度之消防裝置及設備守則》</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-11</span></p></a>
+<a class='card' href='coldroom.html'><h3>冷房（Cold Room）</h3><p>《工廠及工業經營（冷藏庫）規例》</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-12</span></p></a>
+<a class='card' href='boiler.html'><h3>鍋爐房（Boiler Room）</h3><p>《鍋爐及壓力容器條例》（第56章）</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-13</span></p></a>
+<a class='card' href='minorworks.html'><h3>房屋小型工程</h3><p>《建築物（小型工程）規例》（第123N章）</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-14</span></p></a>
+<a class='card' href='asdgs.html'><h3>建築署一般規格（ASD GS）</h3><p>Architectural Services Department General Specification</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-15</span></p></a>
+<a class='card' href='construction.html'><h3>建造工程</h3><p>《建築物條例》（第123章）</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-16</span></p></a>
+<a class='card' href='safety.html'><h3>職業安全</h3><p>《職業安全及健康條例》（第509章）</p><p style='margin-top:8px'><span class='badge'>Synthetic DB: HK-17</span></p></a></section>
+<section class="table-wrap">
+<table><thead><tr><th>#</th><th>主題</th><th>主要法規 / 守則</th><th>分頁資料庫</th><th>官方網址</th></tr></thead>
+<tbody><tr><td>1</td><td>空調與通風（AC）</td><td>屋宇署《建築物（通風系統）規例》</td><td><a class='link' href='ac.html'>查看專頁</a></td><td><a class='link' href='https://www.elegislation.gov.hk/hk/cap123J' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>2</td><td>機電工程署（EMSD）</td><td>《電力條例》（第406章）及《電力（線路）規例》</td><td><a class='link' href='emsd.html'>查看專頁</a></td><td><a class='link' href='https://www.emsd.gov.hk/tc/electricity_safety/index.html' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>3</td><td>消防處（FSD）</td><td>《消防（裝置及設備）規例》（第95B章）</td><td><a class='link' href='fsd.html'>查看專頁</a></td><td><a class='link' href='https://www.elegislation.gov.hk/hk/cap95B' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>4</td><td>水務署（WSD）</td><td>《水務設施條例》（第102章）及《水務設施規例》</td><td><a class='link' href='wsd.html'>查看專頁</a></td><td><a class='link' href='https://www.wsd.gov.hk/tc/plumbing-engineering/index.html' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>5</td><td>升降機及自動梯</td><td>《升降機及自動梯條例》（第618章）</td><td><a class='link' href='lift.html'>查看專頁</a></td><td><a class='link' href='https://www.elegislation.gov.hk/hk/cap618' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>6</td><td>保安系統</td><td>《保安及護衛服務條例》（第460章）</td><td><a class='link' href='security.html'>查看專頁</a></td><td><a class='link' href='https://www.elegislation.gov.hk/hk/cap460' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>7</td><td>BEAM Plus 綠建環評</td><td>BEAM Plus New Buildings 評估手冊</td><td><a class='link' href='beam.html'>查看專頁</a></td><td><a class='link' href='https://www.hkgbc.org.hk/eng/beam-plus/introduction/' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>8</td><td>數據中心（Data Centre）</td><td>TIA-942、Uptime Tier 及 EMSD 能源效益指引</td><td><a class='link' href='datacentre.html'>查看專頁</a></td><td><a class='link' href='https://www.emsd.gov.hk/tc/energy_efficiency/data_centres/index.html' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>9</td><td>環保署（EPD）</td><td>《空氣污染管制條例》（第311章）</td><td><a class='link' href='epd.html'>查看專頁</a></td><td><a class='link' href='https://www.elegislation.gov.hk/hk/cap311' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>10</td><td>香港中華煤氣（Town Gas）</td><td>《氣體安全條例》（第51章）</td><td><a class='link' href='towngas.html'>查看專頁</a></td><td><a class='link' href='https://www.emsd.gov.hk/tc/gas_safety/index.html' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>11</td><td>商用廚房</td><td>消防處《最低限度之消防裝置及設備守則》</td><td><a class='link' href='kitchen.html'>查看專頁</a></td><td><a class='link' href='https://www.hkfsd.gov.hk/chi/source/ordinance/codes.html' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>12</td><td>冷房（Cold Room）</td><td>《工廠及工業經營（冷藏庫）規例》</td><td><a class='link' href='coldroom.html'>查看專頁</a></td><td><a class='link' href='https://www.elegislation.gov.hk/hk/cap59Q' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>13</td><td>鍋爐房（Boiler Room）</td><td>《鍋爐及壓力容器條例》（第56章）</td><td><a class='link' href='boiler.html'>查看專頁</a></td><td><a class='link' href='https://www.elegislation.gov.hk/hk/cap56' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>14</td><td>房屋小型工程</td><td>《建築物（小型工程）規例》（第123N章）</td><td><a class='link' href='minorworks.html'>查看專頁</a></td><td><a class='link' href='https://www.elegislation.gov.hk/hk/cap123N' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>15</td><td>建築署一般規格（ASD GS）</td><td>Architectural Services Department General Specification</td><td><a class='link' href='asdgs.html'>查看專頁</a></td><td><a class='link' href='https://www.archsd.gov.hk/en/publications-and-press-releases/publications/general-specification/index.html' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>16</td><td>建造工程</td><td>《建築物條例》（第123章）</td><td><a class='link' href='construction.html'>查看專頁</a></td><td><a class='link' href='https://www.elegislation.gov.hk/hk/cap123' target='_blank' rel='noopener'>官方連結</a></td></tr>
+<tr><td>17</td><td>職業安全</td><td>《職業安全及健康條例》（第509章）</td><td><a class='link' href='safety.html'>查看專頁</a></td><td><a class='link' href='https://www.elegislation.gov.hk/hk/cap509' target='_blank' rel='noopener'>官方連結</a></td></tr></tbody></table>
+</section>
+<footer>© Hong Kong Building Services Regulation Navigator</footer>
+</div></body></html>
